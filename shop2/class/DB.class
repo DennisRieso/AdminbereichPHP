@@ -1,0 +1,29 @@
+<?php
+
+class DB
+{
+	public	$servername       = "localhost"; # 127.0.0.1
+	public	$username         = "root";
+	public	$password   	  = "";
+	public	$db_name     	  = "shop2";
+	public static $connection = null;
+	
+	
+	public function __construct()
+	{
+		// Create connection
+		if(  DB::$connection == null )
+		{
+		    DB::$connection = new mysqli( $this->servername, $this->username, $this->password , $this->db_name);
+		}		
+		
+		// Check connection
+		if ( DB::$connection->connect_error) 
+		{
+		  die( "Connection failed: " . DB::$connection->connect_error );
+		}
+		//echo "Connected successfully";		
+	}
+	
+}	
+	

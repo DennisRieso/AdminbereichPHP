@@ -1,0 +1,152 @@
+<?php
+
+class Art_2_Kat
+{	
+
+	public 	$id; 	
+	public  $art_id; 	
+	public  $kat_id; 	
+	private $deleted;
+
+	public function __construct( $in_id = 0 )
+	{		
+		if( $in_id > 0 )
+		{   
+			## User mit id aus DB laden	
+			$sql = "SELECT * FROM `art_2_kat` WHERE `id` = ". intval( $in_id ) ." AND deleted = 0 ;";
+			$res = mysqli_query( DB::$connection , $sql );
+			
+			// ist GENAU 1 datensatz im ResultSet
+			if( mysqli_num_rows( $res ) == 1 )
+			{
+				$row = mysqli_fetch_assoc( $res );
+			
+				$this->id 		  = $row['id']; 
+				$this->art_id     = $row['art_id']; 
+				$this->kat_id     = $row['kat_id'];  				
+				$this->deleted    = $row['deleted']; 	
+			}
+			// wenn KEIN Datensatzt da ist 
+			else if( mysqli_num_rows( $res ) == 0 )
+			{
+				die( " FEHLER : Keinen Datensatzt trotz ID gefunden !! ( vielleicht gelöscht ?? ) ");
+			}
+			else
+			{
+				die( " PANIC : Mehr als 1 Datensatzt gefunden !!  ");
+			}
+			
+		}		
+		else
+		{
+			## neuer Artikel
+			$this->id      = 0;
+			$this->deleted = 0;
+		}
+	}
+
+
+	private function create()
+	{
+		if( $this->id > 0 )
+		{
+			echo " Fehler: Create mit ID > 0 versucht !!! ";
+			return;
+		}
+		
+		$sql_art_id = intval( $this->art_id );   
+		$sql_kat_id = intval( $this->kat_id );   
+
+
+		$sql = "INSERT INTO `art_2_kat` 
+				( `art_id`           , `kat_id`            ) 
+				VALUES 
+				( '". $sql_art_id ."', '". $sql_kat_id ."' );";
+					
+		$res = mysqli_query( DB::$connection , $sql );
+		
+		if( $res === true )
+		{
+			$this->id = mysqli_insert_id( DB::$connection );
+		}
+		else
+		{
+			echo " Insert ist fehlgeschalgen : ". mysqli_error( DB::$connection );
+		}		
+	}
+	
+
+	
+	private function update()
+	{
+		if( $this->id < 1 )
+		{
+			echo " Fehler: Update mit ID = 0 versucht !!! ";
+			return;
+		}
+		
+		$sql_art_id = intval( $this->art_id );   
+		$sql_kat_id = intval( $this->kat_id );
+	
+		
+		$sql = "UPDATE `art_2_kat` 
+					SET 
+						`art_id`     = '". $sql_art_id ."', 
+						`kat_id`     = '". $sql_kat_id ."', 
+						`deleted`    = '". $this->deleted ."' 
+					
+					WHERE `id` = ". intval( $this->id ) ." ;";
+		
+		
+		$res = mysqli_query( DB::$connection , $sql );	
+
+		if( $res === false )
+		{
+			echo " Update ist fehlgeschalgen : ". mysqli_error( DB::$connection );
+		}			
+	}
+
+
+	public function save()
+	{
+		if( $this->id > 0 )
+		{
+			$this->update();
+		}
+		else
+		{
+			$this->create();
+		}
+	}
+
+
+	public function del_it()
+	{
+		if( $this->id < 1 )
+		{
+			echo " Fehler: Delete mit ID = 0 versucht !!! ";
+			return;
+		}			
+		
+		$this->deleted = 1;
+
+		$this->update();
+	}
+
+
+	public static function getAll()
+	{
+		$sql = "SELECT `id` FROM `art_2_kat` WHERE `deleted` = 0; ";  
+		$res = mysqli_query( DB::$connection , $sql );
+		
+		$re_array = array();
+		
+		while( $row = mysqli_fetch_assoc($res) )
+		{
+			$re_array[] = $row["id"];
+		}
+		return $re_array;
+	}
+
+}
+

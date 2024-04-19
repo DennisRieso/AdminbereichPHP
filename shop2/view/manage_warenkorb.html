@@ -1,0 +1,17 @@
+
+<h3>Warenkorb ###WARENKORB_INFO###</h3>
+
+<form action="/shop2/index.php?act=manage_warenkorb" method="POST" 		autocomplete="off" >
+				
+	<input type="hidden" 	name="id" 		value="###id###" 		autocomplete="off" />
+	
+	<label>User_ID:</label>
+	<input type="text" 		name="user_id" 		value="###user_id###" 	autocomplete="off" /><br>
+	<label>Datum:</label>
+	<input type="datetime-local" 		name="datum" 		value="###datum###" 	autocomplete="off" /><br>
+	<label>Summe:</label>
+	<input type="text" 		name="summe" 		value="###summe###" 	autocomplete="off" /><br>
+	
+	<input type="submit" 	name = "send" 	value="speichern" />
+			
+</form>

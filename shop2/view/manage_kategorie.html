@@ -1,0 +1,26 @@
+
+<h3>Kategorie ###KATEGORIE_INFO###</h3>
+
+<form action="/shop2/index.php?act=manage_kategorie" method="POST" 	enctype="multipart/form-data"	autocomplete="off" >
+				
+	<input type="hidden" 	name="id" 		value="###id###" 		autocomplete="off" />
+	
+	<label>Name:</label>
+	<input type="text" 		name="name" 		value="###name###" 	autocomplete="off" /><br>
+	
+	<label>Eltern-Kat.:</label>
+	<select name="parent_id">
+		###parent_id_options###
+		
+	</select>
+	<br>
+	
+	<label>Bild:</label>
+	<input type="file" name="bild" />
+	<img src="###bild###" style="max-width:50px" />
+	<br>
+	
+	<input type="submit" 	name = "send" 	value="speichern" />
+			
+</form>
+

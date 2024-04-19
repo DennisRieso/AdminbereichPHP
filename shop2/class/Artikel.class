@@ -1,0 +1,176 @@
+<?php
+
+class Artikel
+{
+	public $id; 	
+	public  $name; 	
+	public  $beschreibung; 	
+	public  $bild; 	
+	public  $lagerbestand;
+	private $deleted;
+
+    # CRUD => C.(Create)  R.(Read)  U.(Update)  D.(Delete)
+
+	public function __construct( $in_id = 0 )
+	{		
+		if( $in_id > 0 )
+		{   
+			## artikel mit id aus DB laden	
+			$sql = "SELECT * FROM artikel WHERE id = ". intval( $in_id ) ." AND deleted = 0 ;";
+			$res = mysqli_query( DB::$connection , $sql );
+			
+			// ist GENAU 1 datensatz im ResultSet
+			if( mysqli_num_rows( $res ) == 1 )
+			{
+				$row = mysqli_fetch_assoc( $res );
+			
+				$this->id 			= $row['id']; 
+				$this->name 		= $row['name']; 
+				$this->beschreibung = $row['beschreibung']; 
+				$this->bild 		= $row['bild']; 
+				$this->lagerbestand = $row['lagerbestand']; 				
+				$this->deleted      = $row['deleted']; 	
+			}
+			// wenn KEIN Datensatzt da ist 
+			else if( mysqli_num_rows( $res ) == 0 )
+			{
+				die( " FEHLER : Keinen Datensatz trotz ID gefunden !! ( vielleicht gelöscht ?? ) ");
+			}
+			else
+			{
+				die( " PANIC : Mehr als 1 Datensatzt gefunden !!  ");
+			}
+			
+		}		
+		else
+		{
+			## neuer Artikel
+			$this->id      = 0;
+			$this->deleted = 0;
+		}
+	}
+
+
+	private function create()
+	{
+		if( $this->id > 0 )
+		{
+			echo " Fehler: Create mit ID > 0 versucht !!! ";
+			return;
+		}
+		
+		$sql_name         = mysqli_real_escape_string( DB::$connection , $this->name );   
+		$sql_beschreibung = mysqli_real_escape_string( DB::$connection , $this->beschreibung );   
+		$sql_bild         = mysqli_real_escape_string( DB::$connection , $this->bild );   
+		$sql_lagerbestand = intval( $this->lagerbestand );   
+
+		$sql = "INSERT INTO `artikel` 
+				( `name`           , `beschreibung`            , `bild`           , `lagerbestand` ) 
+				VALUES 
+				( '". $sql_name ."', '". $sql_beschreibung ."' , '". $sql_bild ."', '". $sql_lagerbestand ."');";
+					
+		$res = mysqli_query( DB::$connection , $sql );
+		
+		if( $res === true )
+		{
+			$this->id = mysqli_insert_id( DB::$connection );
+		}
+		else
+		{
+			echo " Insert ist fehlgeschalgen : ". mysqli_error( DB::$connection );
+		}		
+	}
+	
+	
+	private function update()
+	{
+		if( $this->id < 1 )
+		{
+			echo " Fehler: Update mit ID = 0 versucht !!! ";
+			return;
+		}
+		
+		$sql_name         = mysqli_real_escape_string( DB::$connection , $this->name );   
+		$sql_beschreibung = mysqli_real_escape_string( DB::$connection , $this->beschreibung );   
+		$sql_bild         = mysqli_real_escape_string( DB::$connection , $this->bild );   
+		$sql_lagerbestand = intval( $this->lagerbestand ); 		
+		
+		$sql = "UPDATE `artikel` 
+					SET 
+						`name`         = '". $sql_name ."', 
+						`beschreibung` = '". $sql_beschreibung ."', 
+						`bild`         = '". $sql_bild ."', 
+						`lagerbestand` = '". $sql_lagerbestand ."', 
+						`deleted`      = '". $this->deleted ."' 
+					
+					WHERE `artikel`.`id` = ". intval( $this->id ) ." ;";
+		
+		
+		$res = mysqli_query( DB::$connection , $sql );	
+
+		if( $res === false )
+		{
+			echo " Update ist fehlgeschalgen : ". mysqli_error( DB::$connection );
+		}			
+	}
+
+
+	public function save()
+	{
+		if( $this->id > 0 )
+		{
+			$this->update();
+		}
+		else
+		{
+			$this->create();
+		}
+	}
+
+
+	public function del_it()
+	{
+		if( $this->id < 1 )
+		{
+			echo " Fehler: Delete mit ID = 0 versucht !!! ";
+			return;
+		}			
+		
+		$this->deleted = 1;
+
+		$this->update();
+	}
+
+
+	public static function getAll()
+	{
+		$sql = "SELECT `id` FROM `artikel` WHERE `deleted` = 0; ";  
+		$res = mysqli_query( DB::$connection , $sql );
+		
+		$re_array = array();
+		
+		while( $row = mysqli_fetch_assoc($res) )
+		{
+			$re_array[] = $row["id"];
+		}
+		return $re_array;
+	}
+	
+	
+		public static function getAllWithName()
+	{
+		$sql = "SELECT `id` , `name` , `username` FROM `artikel` WHERE `deleted` = 0; ";  
+		$res = mysqli_query( DB::$connection , $sql );
+		
+		$re_array = array();
+		
+		while( $row = mysqli_fetch_assoc($res) )
+		{
+			$re_array[$row['id']] = $row['name'];
+		}
+		return $re_array;
+	}
+
+
+}
+

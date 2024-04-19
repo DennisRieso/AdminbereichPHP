@@ -1,0 +1,159 @@
+<?php
+
+class Warenkorb
+{
+	public $id; 	
+	public  $user_id; 	
+	public  $datum; 	
+	public  $summe; 	
+	private $deleted;
+
+	public function __construct( $in_id = 0 )
+	{		
+		if( $in_id > 0 )
+		{   
+			## User mit id aus DB laden	
+			$sql = "SELECT * FROM `warenkorb` WHERE `id` = ". intval( $in_id ) ." AND deleted = 0 ;";
+			$res = mysqli_query( DB::$connection , $sql );
+			
+			// ist GENAU 1 datensatz im ResultSet
+			if( mysqli_num_rows( $res ) == 1 )
+			{
+				$row = mysqli_fetch_assoc( $res );
+			
+				$this->id 		 = $row['id']; 
+				$this->user_id   = $row['user_id']; 
+				$this->datum     = $row['datum'];  				
+				$this->summe     = $row['summe'];  				
+				$this->deleted   = $row['deleted']; 	
+			}
+			// wenn KEIN Datensatzt da ist 
+			else if( mysqli_num_rows( $res ) == 0 )
+			{
+				die( " FEHLER : Keinen Datensatzt trotz ID gefunden !! ( vielleicht gelöscht ?? ) ");
+			}
+			else
+			{
+				die( " PANIC : Mehr als 1 Datensatzt gefunden !!  ");
+			}
+			
+		}		
+		else
+		{
+			## neuer Artikel
+			$this->id      = 0;
+			$this->deleted = 0;
+		}
+	}
+
+
+	private function create()
+	{
+		if( $this->id > 0 )
+		{
+			echo " Fehler: Create mit ID > 0 versucht !!! ";
+			return;
+		}
+		
+		$sql_user_id = intval( $this->user_id );   		
+		$sql_summe   = floatval(  $this->summe );   
+		$sql_datum   = " NOW() ";   
+
+
+		$sql = "INSERT INTO `warenkorb` 
+				( `user_id`           , `datum`              , `summe`           ) 
+				VALUES 
+				( '". $sql_user_id ."',  ". $sql_datum ."    , '". $sql_summe ."' );";
+										
+					
+		$res = mysqli_query( DB::$connection , $sql );
+		
+		if( $res === true )
+		{
+			$this->id = mysqli_insert_id( DB::$connection );
+		}
+		else
+		{
+			echo " Insert ist fehlgeschalgen : ". mysqli_error( DB::$connection );
+		}		
+	}
+	
+
+	
+	private function update()
+	{
+		if( $this->id < 1 )
+		{
+			echo " Fehler: Update mit ID = 0 versucht !!! ";
+			return;
+		}
+		
+		$sql_user_id 	= intval( $this->user_id );   
+		$sql_datum    	= mysqli_real_escape_string( DB::$connection , $this->datum );   
+		$sql_summe    	= floatval( $this->summe );   
+	
+		
+		$sql = "UPDATE `warenkorb` 
+					SET 
+						`user_id`      = '". $sql_user_id ."', 
+						`datum`        = '". $sql_datum ."', 
+						`summe`        = '". $sql_summe ."', 
+						`deleted`      = '". $this->deleted ."' 
+					
+					WHERE `id` = ". intval( $this->id ) ." ;";
+		
+		
+		$res = mysqli_query( DB::$connection , $sql );	
+
+		if( $res === false )
+		{
+			echo " Update ist fehlgeschalgen : ". mysqli_error( DB::$connection );
+		}			
+	}
+
+
+	public function save()
+	{
+		if( $this->id > 0 )
+		{
+			$this->update();
+		}
+		else
+		{
+			$this->create();
+		}
+	}
+
+
+	public function del_it()
+	{
+		if( $this->id < 1 )
+		{
+			echo " Fehler: Delete mit ID = 0 versucht !!! ";
+			return;
+		}			
+		
+		$this->deleted = 1;
+
+		$this->update();
+	}
+
+
+	public static function getAll()
+	{
+		$sql = "SELECT `id` FROM `warenkorb` WHERE `deleted` = 0; ";  
+		$res = mysqli_query( DB::$connection , $sql );
+		
+		$re_array = array();
+		
+		while( $row = mysqli_fetch_assoc($res) )
+		{
+			$re_array[] = $row["id"];
+		}
+		return $re_array;
+	}
+
+
+
+}
+

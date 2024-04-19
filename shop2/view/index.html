@@ -1,0 +1,111 @@
+<html>
+
+	<head>
+		<title>Meine Seite</title>
+	</head>
+
+	<body>
+		<style>
+        body {
+            background-color: #282828;
+            color: #ccc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+   
+        nav {
+            background-color: #333;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+   
+        nav a {
+            color: #ddd;
+            text-decoration: none;
+            padding: 5px 10px;
+            transition: color 0.3s;
+        }
+   
+        nav a:hover {
+            color: #fff;
+        }
+   
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+   
+        th, td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #555;
+        }
+   
+        th {
+            background-color: #404040;
+            color: #fff;
+        }
+   
+        tr:hover {
+            background-color: #505050;
+        }
+   
+        .action-button {
+            padding: 4px 8px;
+            margin-right: 4px;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 4px;
+        }
+   
+        .edit-button {
+            background-color: #4CAF50;
+        }
+   
+        .delete-button {
+            background-color: #f44336;
+        }
+   
+        .edit-button:hover, .delete-button:hover {
+            opacity: 0.8;
+        }        
+		</style>
+		
+		<script>
+		
+			function del( in_url )
+			{
+				if( window.confirm("Wollen Sie den Datensatz wirklich löschen?") == true )
+				{
+					window.location.href = in_url;
+				}
+				else
+				{
+					alert("löschen abgebrochen");
+				}
+			}
+		
+		</script>
+	
+		<nav>
+			Meine Navigation <br>
+			<a href="index.php?act=list_user"> User </a> <br>
+			<a href="index.php?act=list_kategorie"> Kategorien </a> <br>
+			<a href="index.php?act=list_artikel"> Artikel </a> <br>
+			<a href="index.php?act=list_staffelpreise"> Staffelpreise </a> <br>
+			<a href="index.php?act=list_warenkorb"> Warenkorb </a> <br>
+			<a href="index.php?act=list_art2kat"> Art_2_Kat </a> <br>
+			<a href="index.php?act=list_art2war"> Art_2_War </a> <br>
+			###Logout###
+		</nav>
+		
+		<div id="content" style="border: 2px solid #ccc; padding:8px;" >
+		
+			###CONTENT###
+		
+		</div>
+	
+
+
+	</body>
+
+</html>

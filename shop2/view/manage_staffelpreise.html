@@ -1,0 +1,19 @@
+
+<h3>Staffelpreise ###STAFFEL_INFO###</h3>
+
+<form action="/shop2/index.php?act=manage_staffelpreise" method="POST" 		autocomplete="off" >
+				
+	<input type="hidden" 	name="id" 		value="###id###" 		autocomplete="off" />
+	
+	<label>Art_ID:</label>
+	<select name="art_id">
+	###art_id_options###
+	</select>
+	<label>Ab_Menge:</label>
+	<input type="text" 		name="ab_menge" 	value="###ab_menge###" 	autocomplete="off" /><br>
+	<label>Preis:</label>
+	<input type="text" 		name="preis" 		value="###preis###" 	autocomplete="off" /><br>
+	
+	<input type="submit" 	name = "send" 	value="speichern" />
+			
+</form>
